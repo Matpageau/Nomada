@@ -1,0 +1,26 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+require("dotenv/config");
+const express_1 = __importDefault(require("express"));
+const mongoose_1 = __importDefault(require("mongoose"));
+const MainRouter_1 = __importDefault(require("./Routes/MainRouter"));
+const port = process.env.PORT || 3000;
+const app = (0, express_1.default)();
+app.use("/", MainRouter_1.default);
+const uri = process.env.DATABASE_URL;
+const clientOptions = {
+    serverApi: { version: "1", strict: true, deprecationErrors: true }
+};
+mongoose_1.default.connect(uri, clientOptions)
+    .then(() => {
+    console.log("Connected to database");
+})
+    .catch((err) => {
+    console.error("Error while connecting to MongoDB", err);
+});
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+});
