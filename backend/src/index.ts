@@ -1,10 +1,18 @@
 import 'dotenv/config'
 import express from "express"
+import cors from 'cors'
 import mongoose, { ConnectOptions } from "mongoose"
 import MainRouter from "./Routes/MainRouter"
 
 const port = process.env.PORT || 3000
+
 const app = express()
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true
+}))
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 
 app.use("/", MainRouter)
 

@@ -2,8 +2,8 @@ import express from "express"
 import UserController from "../controllers/UserController"
 import { verifyToken } from "../middlewares/auth"
 
-const UserRouter = express.Router()
+const AuthRouter = express.Router()
 
-UserRouter.get("/me", verifyToken, UserController.getCurrentUser)
+AuthRouter.post("/login", UserController.login)
 
-export default UserRouter
+export default AuthRouter
