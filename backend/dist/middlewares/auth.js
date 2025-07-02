@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.verifyToken = verifyToken;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 function verifyToken(req, res, next) {
-    const token = req.headers["authorization"]?.split(" ")[1];
+    const token = req.cookies.token;
     if (!token) {
         res.status(401).json({
             error: "Token required"
@@ -18,7 +18,8 @@ function verifyToken(req, res, next) {
         if (err || !decoded) {
             return res.status(403).json({ error: "Invalid token" });
         }
-        req.user = decoded;
+        console.log(decoded);
+        req.userId = decoded.userId;
         next();
     });
 }

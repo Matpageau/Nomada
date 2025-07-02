@@ -3,10 +3,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const UserService_1 = require("../services/UserService");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const UserService_1 = require("../services/UserService");
 const UserController = {
-    async login(req, res, next) {
+    async login(req, res) {
         try {
             const { username, password } = req.body;
             const user = await UserService_1.UserService.login(username, password);
@@ -19,13 +19,12 @@ const UserController = {
             res.status(200).json(user);
         }
         catch (error) {
-            console.log(error.message);
-            next(error);
+            res.status(401).json({ message: error.message });
         }
     },
-    async getCurrentUser(req, res, next) {
+    async getCurrentUser(req, res) {
         try {
-            const userId = req.user?._id;
+            const userId = req.userId;
             if (!userId) {
                 res.status(404).json({
                     message: "Invalid user"
@@ -36,7 +35,26 @@ const UserController = {
             res.status(200).json(user);
         }
         catch (error) {
-            next(error);
+            console.error(error.message);
+            res.status(401).json({ message: error.message });
+        }
+    },
+    async getByUsername(req, res) {
+        try {
+            const username = req.params.username;
+            console.log(username);
+            if (!username) {
+                res.status(404).json({
+                    message: "Invalid user"
+                });
+                return;
+            }
+            const user = await UserService_1.UserService.getUserByUsername(username);
+            res.status(200).json(user);
+        }
+        catch (error) {
+            console.error(error.message);
+            res.status(401).json({ message: error.message });
         }
     }
 };

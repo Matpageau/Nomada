@@ -19,10 +19,9 @@ const handleSubmit = async (e: Event) => {
     const res = await axios.post("http://localhost:3000/auth/login", {
       username: form.username.toLowerCase(),
       password: form.password
+    }, {
+      withCredentials: true
     })
-
-
-    console.log(res);
     
     router.push("/")
   } catch (error: any) {
@@ -31,7 +30,7 @@ const handleSubmit = async (e: Event) => {
     if(error.response?.data?.message) {
       errorMessage.value = error.response.data.message
     } else {
-      errorMessage.value == "Server error... Try again"
+      errorMessage.value = "Server error... Try again"
     }
   }
 }

@@ -3,9 +3,23 @@ import CompactUserCard from '@/components/Cards/CompactUserCard.vue';
 import Navbar from '@/components/Navbar/Navbar.vue';
 import type { UserType } from '@/Types/User';
 import axios from 'axios';
+import { onMounted } from 'vue';
+import { ref } from 'vue';
 
-const currentUser: UserType = await axios.get("http://localhost:3000/user/me")
+const currentUser = ref<UserType | null>(null)
+const errorMessage = ref('')
 
+onMounted(async () => {
+  try {
+    const res = await axios.get<UserType>('http://localhost:3000/user/me', {
+      withCredentials: true
+    })
+    currentUser.value = res.data
+  } catch (error: any) {
+    console.error('❌ Failed to fetch current user:', error)
+    errorMessage.value = error.response?.data?.message || 'Unauthorized'
+  }
+})
 </script>
 
 <template>
@@ -16,7 +30,8 @@ const currentUser: UserType = await axios.get("http://localhost:3000/user/me")
         <p>A</p>
       </div>
       <div class="w-2/5 mt-5">
-        <CompactUserCard :user="currentUser"/>
+        <CompactUserCard v-if="currentUser" :user="currentUser"/>
+        <p v-else class="text-red-500">{{ errorMessage }}</p>
       </div>
     </div>
   </div>

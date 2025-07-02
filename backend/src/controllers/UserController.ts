@@ -1,19 +1,15 @@
 import { Request, Response, NextFunction } from 'express'
-import { UserService } from '../services/UserService'
 import { UserType } from '../Types/User'
 import jwt from "jsonwebtoken"
-
-interface AuthenticatedRequest extends Request {
-  user?: UserType
-}
+import { UserService } from '../services/UserService'
 
 const UserController = {
-  async login(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+  async login(req: Request, res: Response) {
     try {
       const { username, password } = req.body
 
       const user = await UserService.login(username, password)
-
+      
       const token = jwt.sign(
         { userId: user._id },
         process.env.JWT_SECRET!,
@@ -28,14 +24,14 @@ const UserController = {
 
       res.status(200).json(user)
     } catch (error: any) {
-      console.log(error.message);
-      next(error)
+      res.status(401).json({ message: error.message })
     }
   },
 
-  async getCurrentUser(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+  async getCurrentUser(req: any, res: Response) {
     try {
-      const userId = req.user?._id
+      const userId = req.userId
+      
       if (!userId) {
         res.status(404).json({
           message: "Invalid user"
@@ -45,8 +41,28 @@ const UserController = {
 
       const user = await UserService.getCurrentUser(userId)
       res.status(200).json(user)
-    } catch (error) {
-      next(error)
+    } catch (error: any) {
+      console.error(error.message)
+      res.status(401).json({ message: error.message })
+    }
+  },
+
+  async getByUsername(req: any, res: Response) {
+    try {
+      const username = req.params.username
+      
+      if (!username) {
+        res.status(404).json({
+          message: "Invalid user"
+        })
+        return
+      }
+
+      const user = await UserService.getUserByUsername(username)
+      res.status(200).json(user)
+    } catch (error: any) {
+      console.error(error.message)
+      res.status(401).json({ message: error.message })
     }
   }
 }

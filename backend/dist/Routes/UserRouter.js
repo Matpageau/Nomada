@@ -8,4 +8,5 @@ const UserController_1 = __importDefault(require("../controllers/UserController"
 const auth_1 = require("../middlewares/auth");
 const UserRouter = express_1.default.Router();
 UserRouter.get("/me", auth_1.verifyToken, UserController_1.default.getCurrentUser);
+UserRouter.get("/by-username/:username", UserController_1.default.getByUsername);
 exports.default = UserRouter;
