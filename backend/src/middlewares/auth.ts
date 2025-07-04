@@ -17,7 +17,6 @@ export function verifyToken(req: any, res: Response, next: NextFunction): void {
     if(err || !decoded) {
       return res.status(403).json({ error: "Invalid token"})
     }
-    console.log(decoded);
     
     req.userId = decoded.userId
 

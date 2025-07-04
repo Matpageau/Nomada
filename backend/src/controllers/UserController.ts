@@ -28,6 +28,24 @@ const UserController = {
     }
   },
 
+  async register(req: Request, res: Response) {
+    try {
+      const { email, password, username, fullName } = req.body
+  
+      if (!email || !password || !username || !fullName) {
+        res.status(400).json({ message: "All fields are required" })
+        return
+      }
+
+      const user = await UserService.register(email, password, username, fullName)
+      res.status(201).json(user)
+      
+    } catch (error: any) {
+      console.error('❌ Register error:', error.message)
+      res.status(500).json({ message: error.message })
+    }
+  },
+
   async getCurrentUser(req: any, res: Response) {
     try {
       const userId = req.userId

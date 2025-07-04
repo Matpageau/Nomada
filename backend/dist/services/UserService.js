@@ -12,11 +12,33 @@ exports.UserService = {
             $or: [{ username: username }, { email: username }]
         }).lean();
         if (!user)
-            throw new Error("Invalid username");
+            throw new Error("User not found");
         const isMatch = await bcrypt_1.default.compare(password, user.password);
         if (!isMatch)
-            throw new Error("Invalid password");
+            throw new Error("Wrong password");
         return user;
+    },
+    async register(email, password, username, fullName) {
+        const existingMail = await UserModel_1.UserModel.findOne({ email });
+        if (existingMail)
+            throw new Error("Email already used");
+        const existingUsername = await UserModel_1.UserModel.findOne({ username });
+        if (existingUsername)
+            throw new Error("Username already used");
+        const hashedPassword = await bcrypt_1.default.hash(password, 10);
+        const user = new UserModel_1.UserModel({
+            email,
+            username,
+            fullName,
+            password: hashedPassword
+        });
+        await user.save();
+        return {
+            _id: user._id,
+            email: user.email,
+            username: user.username,
+            fullName: user.fullName
+        };
     },
     async getCurrentUser(userId) {
         const user = await UserModel_1.UserModel.findById(userId).select('-password').lean();

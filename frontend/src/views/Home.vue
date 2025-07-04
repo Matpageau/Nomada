@@ -1,13 +1,13 @@
 <script setup lang="ts" >
 import CompactUserCard from '@/components/Cards/CompactUserCard.vue';
 import Navbar from '@/components/Navbar/Navbar.vue';
+import router from '@/router';
 import type { UserType } from '@/Types/User';
 import axios from 'axios';
 import { onMounted } from 'vue';
 import { ref } from 'vue';
 
 const currentUser = ref<UserType | null>(null)
-const errorMessage = ref('')
 
 onMounted(async () => {
   try {
@@ -16,8 +16,7 @@ onMounted(async () => {
     })
     currentUser.value = res.data
   } catch (error: any) {
-    console.error('❌ Failed to fetch current user:', error)
-    errorMessage.value = error.response?.data?.message || 'Unauthorized'
+    router.push("/login")
   }
 })
 </script>
@@ -31,7 +30,6 @@ onMounted(async () => {
       </div>
       <div class="w-2/5 mt-5">
         <CompactUserCard v-if="currentUser" :user="currentUser"/>
-        <p v-else class="text-red-500">{{ errorMessage }}</p>
       </div>
     </div>
   </div>

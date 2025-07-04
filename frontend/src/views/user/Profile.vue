@@ -7,6 +7,7 @@ import { ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { onMounted } from 'vue';
 import axios from 'axios';
+import ClientMap from '@/components/Map/ClientMap.vue';
 
 const route = useRoute()
 const username = route.params.username as string
@@ -19,7 +20,6 @@ onMounted(async () => {
   try {
     const userRes = await axios.get<UserType>(`http://localhost:3000/user/by-username/${username}`)
     user.value = userRes.data
-    console.log(user);
     
     const [meRes, postsRes] = await Promise.all([
       await axios.get<UserType>('http://localhost:3000/user/me', {
@@ -36,7 +36,6 @@ onMounted(async () => {
     console.error('❌ Failed to fetch user profile:', error)
   }
 })
-
 </script>
 
 <template>
@@ -70,6 +69,9 @@ onMounted(async () => {
 
           </div>
         </div>
+      </div>
+      <div class="w-1/2 ml-5 h-full">
+        <ClientMap />
       </div>
     </div>
   </div>

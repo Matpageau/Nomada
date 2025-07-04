@@ -7,12 +7,37 @@ export const UserService = {
     const user = await UserModel.findOne({
       $or: [{username: username}, {email: username}]
     }).lean()
-    if(!user) throw new Error("Invalid username")
+    if(!user) throw new Error("User not found")
 
     const isMatch = await bcrypt.compare(password, user.password)
-    if(!isMatch) throw new Error("Invalid password")
+    if(!isMatch) throw new Error("Wrong password")
 
     return user
+  },
+
+  async register(email: string, password: string, username: string, fullName: string) {
+    const existingMail = await UserModel.findOne({ email })
+    if(existingMail) throw new Error("Email already used")
+
+    const existingUsername = await UserModel.findOne({ username })
+    if(existingUsername) throw new Error("Username already used")
+
+    const hashedPassword = await bcrypt.hash(password, 10)
+
+    const user = new UserModel({
+      email,
+      username,
+      fullName,
+      password: hashedPassword
+    })
+
+    await user.save()
+    return {
+      _id: user._id,
+      email: user.email,
+      username: user.username,
+      fullName: user.fullName
+    }
   },
 
   async getCurrentUser(userId: string): Promise<UserType> {

@@ -16,7 +16,7 @@ const handleSubmit = async (e: Event) => {
   e.preventDefault()
   
   try {
-    const res = await axios.post("http://localhost:3000/auth/login", {
+    await axios.post("http://localhost:3000/auth/login", {
       username: form.username.toLowerCase(),
       password: form.password
     }, {
@@ -47,14 +47,14 @@ const handleSubmit = async (e: Event) => {
         <div class="flex flex-col mt-6">
           <input 
             type="text"
-            class="border-1 p-2 text-sm outline-none"
+            class="border-1 p-2 mt-2 text-sm outline-none"
             placeholder='Username or e-mail'
             v-model="form.username"
             required
           >
           <input 
             type="password"
-            class="border-1 p-2 text-sm outline-none"
+            class="border-1 p-2 mt-2 text-sm outline-none"
             placeholder='Password'
             v-model="form.password"
             required
@@ -70,7 +70,7 @@ const handleSubmit = async (e: Event) => {
         <p v-if="errorMessage" class="text-red-500 text-sm mt-2">{{ errorMessage }}</p>
       </form>
       <div class="flex flex-col border-1 border-neutral-700 p-6 rounded mt-3 w-full">
-        <p class="text-ms text-center">You d'ont have an an account ? <a class="text-[var(--main)]" href="/auth/register">Create one</a></p>
+        <p class="text-ms text-center">You d'ont have an an account ? <a class="text-[var(--main)]" href="/register">Create one</a></p>
       </div>
     </div>
   </div>
