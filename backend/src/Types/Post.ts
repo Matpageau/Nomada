@@ -1,7 +1,7 @@
 import { Types } from "mongoose"
 
 export interface PostType {
-  _id : string
+  _id : object
   owner_id: Types.ObjectId
   description: string
   photos: Types.ObjectId[]
