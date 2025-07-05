@@ -8,6 +8,7 @@ import axios from 'axios';
 
 const props = defineProps<{
   postId: string
+  stepId?: string | null
 }>()
 
 const emit = defineEmits<{
@@ -29,6 +30,7 @@ const setMedias = (med: string[]) => {
 const handleSave = async () => {
   try {
     const payload = {
+      postId: props.postId,
       medias: medias.value,
       description: description.value,
       location: {
@@ -36,17 +38,23 @@ const handleSave = async () => {
         lat: lngLat.value[1],
       }
     }
+    
+    if(props.stepId) {
+      const res = await axios.put(`http://localhost:3000/step/${props.stepId}`,
+        payload
+      )
+      console.log('✅ Saved saved:', res.data)
+    }else{
+      const res = await axios.post(`http://localhost:3000/step`,
+        payload,
+        { withCredentials: true }
+      )
+      console.log('✅ Saved created:', res.data)
+    }
 
-    const res = await axios.post(
-      `http://localhost:3000/post/${props.postId}/step`,
-      payload,
-      { withCredentials: true }
-    )
-
-    console.log('✅ Saved post:', res.data)
     emit('close')
   } catch (error) {
-    console.error('❌ Failed to save post:', error)
+    console.error('❌ Failed to save step:', error)
   }
 }
 

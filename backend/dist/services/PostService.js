@@ -19,5 +19,13 @@ exports.PostService = {
     },
     async updatePost(postId, data) {
         return await PostModel_1.PostModel.findByIdAndUpdate(postId, data, { new: true });
+    },
+    async addStepToPost(postId, stepId) {
+        const post = await PostModel_1.PostModel.findById(postId);
+        if (!post)
+            throw new Error("Post not found");
+        post.steps.push(stepId);
+        await post.save();
+        return post.toObject();
     }
 };

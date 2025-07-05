@@ -33,4 +33,4 @@ const StepSchema = new mongoose.Schema<StepDocument>({
   timestamps: true
 })
 
-export const Step: Model<StepDocument> = mongoose.models.Step || mongoose.model<StepDocument>("Step", StepSchema)
+export const StepModel: Model<StepDocument> = mongoose.models.Step || mongoose.model<StepDocument>("Step", StepSchema)

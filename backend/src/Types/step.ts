@@ -1,7 +1,7 @@
 import { Types } from "mongoose"
 
 export interface StepType {
-  _id? : object
+  _id? : Types.ObjectId
   post_id: Types.ObjectId
   lng: number
   lat: number

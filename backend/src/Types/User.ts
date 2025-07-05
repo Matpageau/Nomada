@@ -1,4 +1,7 @@
+import { Types } from "mongoose"
+
 export type UserType = {
+  _id?: Types.ObjectId
   email: string
   password: string
   username: string
@@ -6,5 +9,4 @@ export type UserType = {
   isPrivate: boolean
   profileImg: string
   bio: string
-  _id: string
 }

@@ -9,8 +9,10 @@ import StepModal from './components/StepModal.vue';
 const route = useRoute()
 const postId = route.params.postId as string
 const isStepModalOpen = ref(false)
+const currentStepId = ref<string | null>(null)
 
-const openStepModal = () => {
+const openStepModal = (isNew: boolean, stepId?: string) => {
+  currentStepId.value = isNew ? null : stepId ?? null
   isStepModalOpen.value = true
 }
 
@@ -30,6 +32,7 @@ onMounted(() => {
       v-if="isStepModalOpen"
       @close="closeStepModal"
       :post-id="postId"
+      :step-id="currentStepId"
     />
     <Navbar />
     <div class="flex w-full p-10">
@@ -42,7 +45,7 @@ onMounted(() => {
           >
         </div>
         <div class="flex justify-center mt-3">
-          <AddStepBtn @click="openStepModal"/>
+          <AddStepBtn @click="openStepModal(true)"/>
         </div>
       </div>
       <div class="w-2/3 ml-10 h-full">
