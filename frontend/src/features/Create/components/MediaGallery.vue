@@ -1,15 +1,39 @@
 <script setup lang="ts">
 import PlusIcon from '@/components/icons/PlusIcon.vue';
-import { onBeforeUnmount, ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
 type MediaItem = File | string;
 
-const medias = ref<MediaItem[]>([]);
-const previewUrls = ref<string[]>([]);
+const props = defineProps<{
+  medias?: MediaItem[]
+}>()
 
 const emit = defineEmits<{
   (e: "setMedias", medias: MediaItem[]): void
 }>();
+
+const medias = ref<MediaItem[]>([]);
+const previewUrls = ref<string[]>([]);
+
+const generatePreviewUrls = (items: MediaItem[]) => {
+  previewUrls.value = items.map(media =>
+    typeof media === 'string' ? media : URL.createObjectURL(media)
+  )
+}
+
+watch(
+  () => props.medias,
+  (newMedias) => {
+    if (newMedias && newMedias.length) {
+      medias.value = newMedias
+      generatePreviewUrls(newMedias)
+    } else {
+      medias.value = []
+      previewUrls.value = []
+    }
+  },
+  { immediate: true }
+)
 
 const handleFileChange = (event: Event) => {
   const target = event.target as HTMLInputElement;
@@ -18,7 +42,6 @@ const handleFileChange = (event: Event) => {
 
   const newFiles = Array.from(files);
 
-  // Create preview URLs and store them to revoke later
   const newPreviews = newFiles.map(file => URL.createObjectURL(file));
   previewUrls.value.push(...newPreviews);
 
@@ -34,7 +57,6 @@ onBeforeUnmount(() => {
 <template>
   <div class="overflow-y-scroll h-full px-2 scrollbar-thin">
     <div class="grid grid-cols-4 gap-4">
-      <!-- Upload box -->
       <div class="relative aspect-square border-2 border-dashed border-gray-400 rounded-xl flex items-center justify-center hover:bg-gray-100 transition">
         <label class="flex flex-col items-center justify-center text-gray-500 cursor-pointer h-full w-full">
           <PlusIcon />
@@ -48,8 +70,6 @@ onBeforeUnmount(() => {
           >
         </label>
       </div>
-
-      <!-- Media thumbnails -->
       <div 
         v-for="(media, index) in medias"
         :key="index"

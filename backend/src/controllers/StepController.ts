@@ -21,7 +21,7 @@ const StepController = {
     try {
       const { stepId } = req.params
 
-      const step = StepService.getStep(stepId)
+      const step = await StepService.getStep(stepId)
 
       res.status(200).json(step)
     } catch (error: any) {

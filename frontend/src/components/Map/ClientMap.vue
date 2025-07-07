@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import mapboxgl from "mapbox-gl"
-import { onMounted, onUnmounted, ref } from "vue";
+import { onMounted, onUnmounted, ref, watch } from "vue";
 import 'mapbox-gl/dist/mapbox-gl.css'
+import type { Coordinate } from "@/Types/Coordinate";
 
 const props = defineProps<{
   canSelectPOI?: boolean
+  marker?: Coordinate | null
 }>()
+
 
 const emit = defineEmits<{
   (e: 'poiSelected', lng: number, lat: number): void
@@ -31,13 +34,22 @@ onMounted(() => {
     visualizePitch: true
   }))
 
+  if(props.marker) {
+    marker = new mapboxgl.Marker({ color: "#3b82f6"})
+    .setLngLat([props.marker.lng, props.marker.lat])
+    .addTo(map)
+
+    map.setCenter([props.marker.lng ?? -1, props.marker.lat ?? -1])
+    map.setZoom(7)
+  }
+
   map.on("click", (e) => {
     if(!props.canSelectPOI) return
 
     const { lng, lat } = e.lngLat
 
     if (!marker) {
-      marker = new mapboxgl.Marker({ color: "#3b82f6" }) // Tailwind blue-500
+      marker = new mapboxgl.Marker({ color: "#3b82f6" })
         .setLngLat([lng, lat])
         .addTo(map!)
     } else {

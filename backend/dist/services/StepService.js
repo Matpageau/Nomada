@@ -7,7 +7,7 @@ exports.StepService = {
         return await StepModel_1.StepModel.find({ post_id: postId });
     },
     async getStep(stepId) {
-        const step = await StepModel_1.StepModel.findById(stepId);
+        const step = await StepModel_1.StepModel.findById(stepId).populate("medias").lean();
         if (!step)
             throw new Error("Step not found");
         return step;

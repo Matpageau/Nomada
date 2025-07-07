@@ -16,7 +16,7 @@ const StepController = {
     async getStep(req, res) {
         try {
             const { stepId } = req.params;
-            const step = StepService_1.StepService.getStep(stepId);
+            const step = await StepService_1.StepService.getStep(stepId);
             res.status(200).json(step);
         }
         catch (error) {

@@ -6,7 +6,6 @@ import AddStepBtn from './components/AddStepBtn.vue';
 import { onMounted, ref } from 'vue';
 import StepModal from './components/StepModal.vue';
 import axios from 'axios';
-import type { StepType } from '@/Types/step';
 import StepCard from './components/StepCard.vue';
 import type { PopulatedStep } from '@/Types/PopulatedStep';
 
@@ -62,8 +61,9 @@ onMounted( async () => {
           >
             <StepCard
               :step="step"
+              :onclick="() => openStepModal(false, step._id?.toString())"
             />
-          <AddStepBtn @click="openStepModal(false, step._id?.toString())"/>
+          <AddStepBtn @click="openStepModal(true)"/>
         </template>
         </div>
       </div>

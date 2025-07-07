@@ -3,8 +3,10 @@ import BaseModal from '@/components/Modals/BaseModal.vue';
 import MediaGallery from '@/features/Create/components/MediaGallery.vue';
 import ClientMap from '@/components/Map/ClientMap.vue';
 import BaseBtn from '@/components/Buttons/BaseBtn.vue';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import axios from 'axios';
+import type { PopulatedStep } from '@/Types/PopulatedStep';
+import type { Coordinate } from '@/Types/Coordinate';
 
 const props = defineProps<{
   postId: string
@@ -15,12 +17,25 @@ const emit = defineEmits<{
   (e: "close"): void
 }>()
 
-const lngLat = ref([0,0])
+const isDataReady = ref(false)
+const lngLat = ref<Coordinate | null>(null)
 const medias = ref<(string | File)[]>([])
 const description = ref("")
 
+onMounted(async () => {    
+  if(props.stepId) {    
+    const stepRes = await axios.get<PopulatedStep>(`http://localhost:3000/step/${props.stepId}`)
+    const step = stepRes.data
+
+    lngLat.value = {lng: step.lng, lat: step.lat}
+    medias.value = step.medias.map(m => m.url)
+    description.value = step.description
+  }
+  isDataReady.value = true
+})
+
 const setLngLat = (lng: number, lat: number) => {
-  lngLat.value = [lng, lat]
+  lngLat.value = {lng: lng, lat: lat}
 }
 
 const setMedias = (med: (string | File)[]) => {
@@ -56,8 +71,8 @@ const handleSave = async () => {
       mediaIds: [...existingIds, ...uploadedIds],
       description: description.value,
       location: {
-        lng: lngLat.value[0],
-        lat: lngLat.value[1],
+        lng: lngLat.value?.lng ?? null,
+        lat: lngLat.value?.lat ?? null,
       }
     }
     
@@ -85,7 +100,11 @@ const handleSave = async () => {
     <div class="flex flex-grow z-100 h-[80vh]">
       <div class="flex flex-col w-1/2 shrink-0 h-full">
         <div class="flex-[3] h-3/5 overflow-hidden">
-          <MediaGallery @set-medias="setMedias"/>
+          <MediaGallery
+            v-if="isDataReady"
+            :medias="medias"
+            @set-medias="setMedias"
+          />
         </div>
         <textarea 
           name="description"
@@ -94,7 +113,7 @@ const handleSave = async () => {
         ></textarea>
       </div>
       <div class="ml-2 w-1/2 h-full">
-        <ClientMap :can-select-p-o-i="true" @poi-selected="setLngLat"/>
+        <ClientMap v-if="isDataReady" :marker="lngLat ?? null" :can-select-p-o-i="true" @poi-selected="setLngLat"/>
       </div>
     </div>
     <BaseBtn 

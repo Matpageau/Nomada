@@ -8,8 +8,8 @@ export const StepService = {
   },
 
   async getStep(stepId: string): Promise<StepType> {
-    const step = await StepModel.findById(stepId)
-
+    const step = await StepModel.findById(stepId).populate("medias").lean()
+    
     if(!step) throw new Error("Step not found")
     return step
   },
