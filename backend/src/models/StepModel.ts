@@ -1,4 +1,4 @@
-import { StepType } from "../Types/step";
+import { StepType } from "../Types/Step";
 import mongoose, { Model } from "mongoose";
 
 interface StepDocument extends StepType, Document {}
@@ -17,7 +17,8 @@ const StepSchema = new mongoose.Schema<StepDocument>({
     required: true
   },
   medias: [{
-    type: String,
+    type: mongoose.SchemaTypes.ObjectId,
+    ref: "Media",
     default: []
   }],
   description: {

@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PostService = void 0;
 const PostModel_1 = require("../models/PostModel");
+const StepModel_1 = require("../models/StepModel");
 exports.PostService = {
     async getAllPosts(userId) {
         return await PostModel_1.PostModel.find({ owner_id: userId }).lean();
@@ -27,5 +28,8 @@ exports.PostService = {
         post.steps.push(stepId);
         await post.save();
         return post.toObject();
+    },
+    async getAllStepFromPost(postId) {
+        return await StepModel_1.StepModel.find({ post_id: postId }).populate("medias").lean();
     }
 };

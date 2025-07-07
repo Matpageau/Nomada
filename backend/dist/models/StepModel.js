@@ -19,7 +19,8 @@ const StepSchema = new mongoose_1.default.Schema({
         required: true
     },
     medias: [{
-            type: String,
+            type: mongoose_1.default.SchemaTypes.ObjectId,
+            ref: "Media",
             default: []
         }],
     description: {

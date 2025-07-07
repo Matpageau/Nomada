@@ -14,7 +14,7 @@ defineProps<{
       <TripCard :is-create="isDraft"/>
       <TripCard 
         v-for="post in posts"
-        :key="post._id"
+        :key="post._id.toString()"
         :post="post"
       />
     </div>

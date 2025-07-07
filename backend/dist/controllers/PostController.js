@@ -38,6 +38,16 @@ const PostController = {
         catch (error) {
             res.status(500).json({ error: 'Failed to update post' });
         }
+    },
+    async getAllStepFromPost(req, res) {
+        try {
+            const { postId } = req.params;
+            const steps = await PostService_1.PostService.getAllStepFromPost(postId);
+            res.status(200).json(steps);
+        }
+        catch (error) {
+            res.status(500).json({ error: 'Failed to fetch steps' });
+        }
     }
 };
 exports.default = PostController;

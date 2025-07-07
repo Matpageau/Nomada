@@ -2,6 +2,7 @@ import { Request, Response } from "express"
 import { PostService } from "../services/PostService"
 import { StepService } from "../services/StepService"
 import { Types } from "mongoose"
+import { MediaService } from "../services/MediaService"
 
 const StepController = {
   async getAllStepsFromPost(req: any, res: Response) {
@@ -31,7 +32,7 @@ const StepController = {
   async createStep(req: any, res: Response) {
     try {
       const userId = req.userId
-      const { postId, medias, description, location } = req.body
+      const { postId, mediaIds, description, location } = req.body
 
       const post = await PostService.getPost(postId)
 
@@ -44,8 +45,14 @@ const StepController = {
         res.status(403).json({ message: 'Unauthorized: You do not own this post' })
         return
       }
-
-      const newStep = await StepService.createStep(postId, medias, description, location.lng, location.lat)
+      
+      const newStep = await StepService.createStep(
+        postId,
+        mediaIds,
+        description,
+        location.lng,
+        location.lat
+      )
       if(!newStep?._id) throw new Error("Error while creating step")
 
       const updatedPost = await PostService.addStepToPost(postId, newStep._id as Types.ObjectId)

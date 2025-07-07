@@ -16,22 +16,44 @@ const emit = defineEmits<{
 }>()
 
 const lngLat = ref([0,0])
-const medias = ref<string[]>([])
+const medias = ref<(string | File)[]>([])
 const description = ref("")
 
 const setLngLat = (lng: number, lat: number) => {
   lngLat.value = [lng, lat]
 }
 
-const setMedias = (med: string[]) => {
+const setMedias = (med: (string | File)[]) => {
   medias.value = med
 }
 
 const handleSave = async () => {
   try {
+
+    const existingIds = medias.value.filter(m => typeof m === "string") as string[]
+    const newFiles = medias.value.filter(m => m instanceof File) as File[]
+
+    let uploadedIds: string[] = []
+
+    if(newFiles.length > 0) {
+      const formData = new FormData()
+      newFiles.forEach(file => formData.append("media", file))
+
+      const uploadRes = await axios.post(
+        "http://localhost:3000/media/upload",
+        formData,
+        { 
+          headers: { "Content-Type": "multipart/form-data" },
+          withCredentials: true
+        }
+      )      
+
+      uploadedIds = uploadRes.data.mediaIds
+    }
+
     const payload = {
       postId: props.postId,
-      medias: medias.value,
+      mediaIds: [...existingIds, ...uploadedIds],
       description: description.value,
       location: {
         lng: lngLat.value[0],
@@ -40,9 +62,7 @@ const handleSave = async () => {
     }
     
     if(props.stepId) {
-      const res = await axios.put(`http://localhost:3000/step/${props.stepId}`,
-        payload
-      )
+      const res = await axios.put(`http://localhost:3000/step/${props.stepId}`, payload)
       console.log('✅ Saved saved:', res.data)
     }else{
       const res = await axios.post(`http://localhost:3000/step`,

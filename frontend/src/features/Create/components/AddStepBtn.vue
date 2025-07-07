@@ -8,7 +8,7 @@ const emit = defineEmits<{
 
 <template>
   <button 
-    class="cursor-pointer"
+    class="cursor-pointer w-fit"
     @click="emit('click')"
   >
     <PlusIcon />

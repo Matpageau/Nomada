@@ -1,4 +1,3 @@
-<!-- src/features/Profile/ProfileView.vue -->
 <script setup lang="ts">
 import Navbar from '@/components/Navbar/Navbar.vue'
 import defaultProfile from '@/assets/imgs/defautProfile.jpg'

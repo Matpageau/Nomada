@@ -1,6 +1,5 @@
 import { Request, Response } from "express"
 import { PostService } from "../services/PostService"
-import { PostModel } from "../models/PostModel"
 
 const PostController = {
   async getAllPosts(req: Request, res: Response) {
@@ -42,8 +41,20 @@ const PostController = {
       const updatedPost = await PostService.updatePost(postId, updateData)
 
       res.status(200).json(updatedPost)
-    } catch (error) {
+    } catch (error: any) {
       res.status(500).json({ error: 'Failed to update post' })
+    }
+  },
+
+  async getAllStepFromPost(req: Request, res: Response) {
+    try {
+      const { postId } = req.params
+      
+      const steps = await PostService.getAllStepFromPost(postId)
+      
+      res.status(200).json(steps)
+    } catch (error: any) {
+      res.status(500).json({ error: 'Failed to fetch steps' })
     }
   }
 }

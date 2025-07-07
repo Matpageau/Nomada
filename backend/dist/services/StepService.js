@@ -12,10 +12,10 @@ exports.StepService = {
             throw new Error("Step not found");
         return step;
     },
-    async createStep(postId, medias, description, lng, lat) {
+    async createStep(postId, mediaIds, description, lng, lat) {
         return await StepModel_1.StepModel.create({
             post_id: postId,
-            medias: medias,
+            medias: mediaIds,
             description: description,
             lng: lng,
             lat: lat

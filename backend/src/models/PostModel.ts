@@ -13,9 +13,10 @@ const PostSchema = new mongoose.Schema<PostDocument>({
     type: String,
     default: ""
   },
-  photos: [{
+  medias: [{
     type: mongoose.SchemaTypes.ObjectId,
-    ref: "Photo"
+    ref: "Media",
+    default: []
   }],
   steps: [{
     type: mongoose.SchemaTypes.ObjectId,

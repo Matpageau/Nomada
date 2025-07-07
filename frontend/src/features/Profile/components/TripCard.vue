@@ -2,15 +2,13 @@
 import PlusIcon from '@/components/icons/PlusIcon.vue';
 import type { PostType } from '../../../Types/Post';
 import axios from 'axios';
-import router from '@/router';
+import { useRouter } from 'vue-router';
+
+const router = useRouter()
 
 defineProps<{
   post?: PostType
   isCreate?: boolean
-}>()
-
-const emit = defineEmits<{
-  (e: "createPost"): void
 }>()
 
 const handleCreatePost = async () => {
@@ -31,16 +29,23 @@ const handleCreatePost = async () => {
 </script>
 
 <template>
-  <div class="h-1/3">
-    <div 
-      v-if="isCreate"
-      class="flex justify-center items-center h-[350px] w-full rounded bg-[var(--main)] hover:bg-[var(--main-hover)] transition-colors cursor-pointer"
-      @click="handleCreatePost"
+  <div 
+    v-if="isCreate"
+    class="flex justify-center items-center h-[350px] w-full rounded bg-[var(--main)] hover:bg-[var(--main-hover)] transition-colors cursor-pointer"
+    @click="handleCreatePost"
+  >
+    <PlusIcon class="h-[45px] w-[45px]"/>
+  </div>
+  <div 
+    v-else
+    class="flex justify-center items-center h-[350px] w-full rounded bg-neutral-600 hover:bg-neutral-700 transition-colors cursor-pointer"
+    @click="() => router.push(`/post/${post?._id}/edit`)"
+  >
+    <img 
+      v-if="post?.medias[0]"
+      :src="post.medias[0].toString()"
+      alt="Trip photo"
+      class="h-full w-full"
     >
-      <PlusIcon class="h-[50px] w-[50px]"/>
-    </div>
-    <div v-else>
-      <p>Post</p>
-    </div>
   </div>
 </template>

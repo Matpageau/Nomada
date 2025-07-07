@@ -9,4 +9,5 @@ const auth_1 = require("../middlewares/auth");
 const PostRouter = express_1.default.Router();
 PostRouter.get("/user/:userId", PostController_1.default.getAllPosts);
 PostRouter.post("/create", auth_1.verifyToken, PostController_1.default.createPost);
+PostRouter.get("/:postId/steps", PostController_1.default.getAllStepFromPost);
 exports.default = PostRouter;

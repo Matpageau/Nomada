@@ -1,5 +1,6 @@
+import { Types } from "mongoose"
 import { StepModel } from "../models/StepModel"
-import { StepType } from "../Types/step"
+import { StepType } from "../Types/Step"
 
 export const StepService = {
   async getAllStepFromPost(postId: string): Promise<StepType[]> {
@@ -13,10 +14,10 @@ export const StepService = {
     return step
   },
 
-  async createStep(postId: string, medias: string[], description: string, lng: number, lat: number): Promise<StepType> {
+  async createStep(postId: string, mediaIds: Types.ObjectId[], description: string, lng: number, lat: number): Promise<StepType> {    
     return await StepModel.create({
       post_id: postId,
-      medias: medias,
+      medias: mediaIds,
       description: description,
       lng: lng,
       lat: lat

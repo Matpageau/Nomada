@@ -1,6 +1,7 @@
 import { Types } from "mongoose";
 import { PostModel } from "../models/PostModel";
 import { PostType } from "../Types/Post";
+import { StepModel } from "../models/StepModel";
 
 export const PostService = {
   async getAllPosts(userId: string): Promise<PostType[]> {
@@ -32,5 +33,9 @@ export const PostService = {
     await post.save()
 
     return post.toObject() as PostType
+  },
+
+  async getAllStepFromPost(postId: string) {
+    return await StepModel.find({ post_id: postId }).populate("medias").lean()
   }
 }

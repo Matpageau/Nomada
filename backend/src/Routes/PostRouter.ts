@@ -6,5 +6,6 @@ const PostRouter = express.Router()
 
 PostRouter.get("/user/:userId", PostController.getAllPosts)
 PostRouter.post("/create", verifyToken, PostController.createPost)
+PostRouter.get("/:postId/steps", PostController.getAllStepFromPost)
 
 export default PostRouter

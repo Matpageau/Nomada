@@ -15,9 +15,10 @@ const PostSchema = new mongoose_1.default.Schema({
         type: String,
         default: ""
     },
-    photos: [{
+    medias: [{
             type: mongoose_1.default.SchemaTypes.ObjectId,
-            ref: "Photo"
+            ref: "Media",
+            default: []
         }],
     steps: [{
             type: mongoose_1.default.SchemaTypes.ObjectId,
