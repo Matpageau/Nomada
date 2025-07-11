@@ -1,5 +1,4 @@
-import { Request, Response, NextFunction } from 'express'
-import { UserType } from '../Types/User'
+import { Request, Response } from 'express'
 import jwt from "jsonwebtoken"
 import { UserService } from '../services/UserService'
 

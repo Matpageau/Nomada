@@ -3,17 +3,20 @@ import ClientMap from '@/components/Map/ClientMap.vue';
 import Navbar from '@/components/Navbar/Navbar.vue';
 import { useRoute } from 'vue-router';
 import AddStepBtn from './components/AddStepBtn.vue';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import StepModal from './components/StepModal.vue';
 import axios from 'axios';
 import StepCard from './components/StepCard.vue';
 import type { PopulatedStep } from '@/Types/PopulatedStep';
+import type { MarkerData } from '@/Types/Marker';
 
 const route = useRoute()
 const postId = route.params.postId as string
 const isStepModalOpen = ref(false)
 const currentStepId = ref<string | null>(null)
 const steps = ref<PopulatedStep[]>([])
+
+const isDataReady = ref(false)
 
 const openStepModal = (isNew: boolean, stepId?: string) => {
   currentStepId.value = isNew ? null : stepId ?? null
@@ -31,7 +34,16 @@ onMounted( async () => {
   } catch (err) {
     console.error('❌ Failed to fetch steps:', err)
   }
+  isDataReady.value = true
 })
+
+const stepsLoc = computed<MarkerData[]>(() => 
+  steps.value.map(s => ({
+    coord: { lng: s.lng, lat: s.lat }, 
+    img: s.medias?.[0]?.url ?? null
+  }))
+)
+
 
 </script>
 
@@ -68,7 +80,10 @@ onMounted( async () => {
         </div>
       </div>
       <div class="w-2/3 ml-10 h-full">
-        <ClientMap />
+        <ClientMap 
+          v-if="isDataReady"
+          :markers="stepsLoc"
+        />
       </div>
     </div>
   </div>

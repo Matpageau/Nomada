@@ -81,7 +81,7 @@ onMounted(async () => {
       </div>
 
       <div class="w-1/2 ml-5 h-full">
-        <ClientMap />
+        <ClientMap :markers="[]"/>
       </div>
     </div>
   </div>

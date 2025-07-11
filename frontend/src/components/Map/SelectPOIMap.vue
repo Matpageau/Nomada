@@ -1,21 +1,34 @@
 <script setup lang="ts">
 import mapboxgl from "mapbox-gl"
-import { createApp, onMounted, onUnmounted, ref } from "vue";
+import { createApp, onMounted, onUnmounted, ref, watch } from "vue";
 import 'mapbox-gl/dist/mapbox-gl.css'
 import type { MarkerData } from "@/Types/Marker";
 import MapMarker from "./MapMarker.vue";
+import type { Coordinate } from "@/Types/Coordinate";
+
+const emit = defineEmits<{
+  (e: "update", newMarker: Coordinate): void
+}>()
 
 const props = defineProps<{
-  markers: MarkerData[]
+  marker: MarkerData | null
 }>()
 
 const mapContainer = ref<HTMLDivElement | null>(null)
 let map: mapboxgl.Map | null = null
 let bounds = new mapboxgl.LngLatBounds()
+let currentMarker: mapboxgl.Marker | null = null
 
 onMounted(() => {
   mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN!
   if(!mapContainer.value) return
+
+  if(props.marker) {
+    currentMarker = new mapboxgl.Marker()
+    .setLngLat([props.marker.coord.lng, props.marker.coord.lat])
+
+    bounds.extend(currentMarker._lngLat)
+  }
 
   map = new mapboxgl.Map({
     container: mapContainer.value,
@@ -29,6 +42,24 @@ onMounted(() => {
     visualizePitch: true
   }))
 
+
+  watch(() => props.marker, (newMarker) => {
+    if (!map || !newMarker) return
+
+    if(currentMarker) {
+      currentMarker.remove()
+      currentMarker = null
+    }
+    
+    const container = document.createElement("div")
+    createApp(MapMarker, { img: newMarker.img }).mount(container)
+
+    currentMarker = new mapboxgl.Marker({ element: container })
+      .setLngLat([newMarker.coord.lng, newMarker.coord.lat])
+      .addTo(map!)
+
+  }, { immediate: true })
+
   map.on("load", () => {
     map!.fitBounds(bounds, {
       padding: 50,
@@ -38,20 +69,9 @@ onMounted(() => {
     })
   })
 
-  if(props.markers.length > 0) {
-    props.markers.forEach(({coord, img}) => {
-      const container = document.createElement("div")
-
-      createApp(MapMarker, { img }).mount(container)
-
-
-      new mapboxgl.Marker({ element: container })
-      .setLngLat([coord.lng, coord.lat])
-      .addTo(map!)
-
-      bounds.extend([coord.lng, coord.lat])
-    });
-  }
+  map.on("click", (e) => {
+    emit('update', {lng: e.lngLat.lng, lat: e.lngLat.lat})
+  })
 })
 
 onUnmounted(() => {
