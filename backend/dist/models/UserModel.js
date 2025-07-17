@@ -22,7 +22,7 @@ const UserSchema = new mongoose_1.default.Schema({
     },
     fullName: {
         type: String,
-        required: true
+        default: ""
     },
     isPrivate: {
         type: Boolean,

@@ -5,8 +5,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const UserService_1 = require("../services/UserService");
+const ApiError_1 = __importDefault(require("../Utils/ApiError"));
 const UserController = {
-    async login(req, res) {
+    async login(req, res, next) {
         try {
             const { username, password } = req.body;
             const user = await UserService_1.UserService.login(username, password);
@@ -19,22 +20,20 @@ const UserController = {
             res.status(200).json(user);
         }
         catch (error) {
-            res.status(401).json({ message: error.message });
+            next(error);
         }
     },
-    async register(req, res) {
+    async register(req, res, next) {
         try {
-            const { email, password, username, fullName } = req.body;
-            if (!email || !password || !username || !fullName) {
-                res.status(400).json({ message: "All fields are required" });
-                return;
+            const { email, password, username } = req.body;
+            if (!email || !password || !username) {
+                throw new ApiError_1.default(400, "ALL_FIELDS_REQUIRED", "All fields of signup are required");
             }
-            const user = await UserService_1.UserService.register(email, password, username, fullName);
+            const user = await UserService_1.UserService.register(email, password, username);
             res.status(201).json(user);
         }
         catch (error) {
-            console.error('❌ Register error:', error.message);
-            res.status(500).json({ message: error.message });
+            next(error);
         }
     },
     async getCurrentUser(req, res) {

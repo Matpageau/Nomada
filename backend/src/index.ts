@@ -4,6 +4,7 @@ import cors from 'cors'
 import mongoose, { ConnectOptions } from "mongoose"
 import cookieParser from 'cookie-parser'
 import MainRouter from "./Routes/MainRouter"
+import errorHandler from './middlewares/errorHandler'
 
 const port = process.env.PORT || 3000
 
@@ -17,6 +18,8 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 app.use("/", MainRouter)
+
+app.use(errorHandler)
 
 const uri = process.env.DATABASE_URL!;
 const clientOptions: ConnectOptions = {

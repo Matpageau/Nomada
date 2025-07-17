@@ -1,9 +1,10 @@
-import { Request, Response } from 'express'
+import e, { NextFunction, Request, Response } from 'express'
 import jwt from "jsonwebtoken"
 import { UserService } from '../services/UserService'
+import ApiError from '../Utils/ApiError'
 
 const UserController = {
-  async login(req: Request, res: Response) {
+  async login(req: Request, res: Response, next: NextFunction) {
     try {
       const { username, password } = req.body
 
@@ -22,26 +23,24 @@ const UserController = {
       })
 
       res.status(200).json(user)
-    } catch (error: any) {
-      res.status(401).json({ message: error.message })
+    } catch (error) {
+      next(error)
     }
   },
 
-  async register(req: Request, res: Response) {
+  async register(req: Request, res: Response, next: NextFunction) {
     try {
-      const { email, password, username, fullName } = req.body
+      const { email, password, username } = req.body
   
-      if (!email || !password || !username || !fullName) {
-        res.status(400).json({ message: "All fields are required" })
-        return
+      if (!email || !password || !username ) {
+        throw new ApiError(400, "ALL_FIELDS_REQUIRED", "All fields of signup are required")
       }
 
-      const user = await UserService.register(email, password, username, fullName)
+      const user = await UserService.register(email, password, username)
       res.status(201).json(user)
       
-    } catch (error: any) {
-      console.error('❌ Register error:', error.message)
-      res.status(500).json({ message: error.message })
+    } catch (error) {
+      next(error)
     }
   },
 

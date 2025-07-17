@@ -19,8 +19,8 @@ onMounted(() => {
 
   map = new mapboxgl.Map({
     container: mapContainer.value,
-    style: 'mapbox://styles/matissep/cmco3c11w00ic01s1e20vckdn',
-    center: [0, 0],
+    style: 'mapbox://styles/matissep/cmd7svovc002r01s2alt3fms8',
+    center: [-40, 20],
     zoom: 2
   })
 

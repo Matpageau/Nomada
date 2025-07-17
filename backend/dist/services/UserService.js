@@ -6,39 +6,33 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserService = void 0;
 const UserModel_1 = require("../models/UserModel");
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const ApiError_1 = __importDefault(require("../Utils/ApiError"));
 exports.UserService = {
     async login(username, password) {
         const user = await UserModel_1.UserModel.findOne({
             $or: [{ username: username }, { email: username }]
         }).lean();
         if (!user)
-            throw new Error("User not found");
+            throw new ApiError_1.default(404, "USER_NOT_FOUND", "User not found");
         const isMatch = await bcrypt_1.default.compare(password, user.password);
         if (!isMatch)
-            throw new Error("Wrong password");
+            throw new ApiError_1.default(403, "WRONG_PASSWORD", "Wrong password");
         return user;
     },
-    async register(email, password, username, fullName) {
-        const existingMail = await UserModel_1.UserModel.findOne({ email });
+    async register(email, password, username) {
+        const existingMail = await UserModel_1.UserModel.findOne({ email }).lean();
         if (existingMail)
-            throw new Error("Email already used");
-        const existingUsername = await UserModel_1.UserModel.findOne({ username });
+            throw new ApiError_1.default(403, "EMAIL_USED", "Email already used");
+        const existingUsername = await UserModel_1.UserModel.findOne({ username }).lean();
         if (existingUsername)
-            throw new Error("Username already used");
+            throw new ApiError_1.default(403, "USERNAME_USED", "Username already used");
         const hashedPassword = await bcrypt_1.default.hash(password, 10);
         const user = new UserModel_1.UserModel({
             email,
             username,
-            fullName,
             password: hashedPassword
         });
-        await user.save();
-        return {
-            _id: user._id,
-            email: user.email,
-            username: user.username,
-            fullName: user.fullName
-        };
+        return await user.save();
     },
     async getCurrentUser(userId) {
         const user = await UserModel_1.UserModel.findById(userId).select('-password').lean();
