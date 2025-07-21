@@ -4,7 +4,7 @@ export interface UserType {
   username: string
   fullName: string
   isPrivate: boolean
-  profileImg: string
+  profileImg: string | null
   bio: string
   _id: string
 }

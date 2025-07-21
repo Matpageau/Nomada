@@ -44,28 +44,34 @@ onMounted(async () => {
 <template>
   <div class="flex">
     <Navbar />
-    <div v-if="user" class="flex w-full p-10 max-h-screen">
-      <div class="flex w-1/2">
+    <div v-if="user" class="flex w-full max-h-screen">
+      <div class="flex w-1/2 p-10">
         <div class="flex flex-col w-full">
-          <div class="p-10 border-b-1 border-neutral-700">
+          <div class="border-b-1 border-neutral-700">
             <div class="flex">
-              <div class="w-1/3">
-                <img 
-                  :src="user.profileImg ?? defaultProfile"
-                  alt="Profile picture"
-                  class="rounded-full h-[120px] w-[120px]"
-                />
-              </div>
-              <div class="flex flex-col w-2/3 justify-evenly">
-                <p class="text-2xl">{{ user.username }}</p>
-                <div class="flex gap-10">
-                  <p><strong></strong> Travel</p>
-                  <p><strong></strong> Km Travelled</p>
-                  <p><strong></strong> Follower</p>
-                  <p><strong></strong> Following</p>
+              <img 
+                :src="user.profileImg ?? defaultProfile"
+                alt="Profile picture"
+                class="rounded-full h-[84px] w-[84px]"
+              />
+              <div class="flex justify-between w-full">
+                <div class="flex flex-col justify-between ml-3">
+                  <p class="text-2xl">{{ user.username }}</p>
+                  <p>{{ user.bio }}</p>
                 </div>
-                <p>{{ user.bio }}</p>
+                <div class="flex gap-3">
+                  <p>can</p>
+                  <p>can</p>
+                  <p>can</p>
+                  <p>can</p>
+                </div>
               </div>
+            </div>
+            <div class="flex w-full gap-10 justify-between mt-12 mb-6">
+              <p><strong>0</strong> Trips</p>
+              <p><strong>0</strong> Steps</p>
+              <p><strong>0</strong> Follower</p>
+              <p><strong>0</strong> Subscriber</p>
             </div>
           </div>
           <div v-if="currentUser?._id === user._id" class="flex justify-evenly mt-3">
@@ -79,8 +85,7 @@ onMounted(async () => {
           <router-view :posts="posts" />
         </div>
       </div>
-
-      <div class="w-1/2 ml-5 h-full">
+      <div class="w-1/2 h-full">
         <ClientMap :markers="[]"/>
       </div>
     </div>

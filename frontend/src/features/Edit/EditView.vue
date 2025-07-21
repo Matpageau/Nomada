@@ -9,6 +9,9 @@ import axios from 'axios';
 import StepCard from './components/StepCard.vue';
 import type { PopulatedStep } from '@/Types/PopulatedStep';
 import type { MarkerData } from '@/Types/Marker';
+import PostTemplate from '@/components/Cards/PostTemplate.vue';
+import type { UserType } from '@/Types/User';
+import BaseBtn from '@/components/Buttons/BaseBtn.vue';
 
 const route = useRoute()
 const postId = route.params.postId as string
@@ -45,6 +48,19 @@ const stepsLoc = computed<MarkerData[]>(() =>
 )
 
 
+const user: UserType = {
+  _id: "adad",
+  bio:"Bio test",
+  email: "",
+  fullName: "Matisse pageau",
+  isPrivate: false,
+  password:"",
+  username:"matissep",
+  profileImg: null
+}
+
+const countries = "CH"
+
 </script>
 
 <template>
@@ -56,34 +72,33 @@ const stepsLoc = computed<MarkerData[]>(() =>
       :step-id="currentStepId"
     />
     <Navbar />
-    <div class="flex w-full p-10">
-      <div class="w-1/3 h-full">
-        <div class="bg-neutral-800 rounded-md p-3">
-          <input 
-            type="text"
-            placeholder="Description"
-            class="w-full"
-          >
-        </div>
-        <div class="flex flex-col items-center gap-2 mt-3">
-          <AddStepBtn @click="openStepModal(true)"/>
-          <template 
-            v-for="step in steps"
-            :key="step._id?.toString()"
-          >
-            <StepCard
-              :step="step"
-              :onclick="() => openStepModal(false, step._id?.toString())"
-            />
-          <AddStepBtn @click="openStepModal(true)"/>
-        </template>
-        </div>
-      </div>
-      <div class="w-2/3 ml-10 h-full">
-        <ClientMap 
-          v-if="isDataReady"
-          :markers="stepsLoc"
+    <div class="flex w-full">
+      <div class="w-2/7 h-full p-7">
+        <PostTemplate
+          type="step"
+          :user="user"
+          :country="countries"
+          :steps="1"
         />
+      </div>
+      <div class="flex flex-col w-5/7">
+        <div class="h-75/100">
+          <ClientMap 
+            v-if="isDataReady"
+            :markers="stepsLoc"
+          />
+        </div>
+        <div class="mt-6 mr-3 h-20/100">
+          <textarea 
+            name="description" 
+            placeholder="Description" 
+            class="p-3 resize-none w-full border-1 border-neutral-900 rounded-md h-full"
+          ></textarea>
+        </div>
+        <div class="flex justify-end h-5/100 my-6 gap-3 mr-3">
+          <BaseBtn text="Cancel" class="bg-neutral-600 px-6"/>
+          <BaseBtn text="Save" class="bg-blue-500 px-6"/>
+        </div>
       </div>
     </div>
   </div>

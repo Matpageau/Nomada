@@ -24,14 +24,18 @@ onMounted(async () => {
 <template>
   <nav class="flex flex-col justify-between w-fit border-r-1 border-neutral-800 p-2 h-screen">
     <div>
-      <a href="/" class="flex min-w-[220px] px-5 py-3 my-2 items-center rounded-md transition-colors hover:bg-neutral-800 outline-none">
-        <HomeIcon />
-        <p class="pl-3">Home</p>
-      </a>
-      <a href="/" class="flex min-w-[220px] px-5 py-3 my-2 items-center rounded-md transition-colors hover:bg-neutral-800 outline-none">
-        <SearchIcon />
-        <p class="pl-3">Search</p>
-      </a>
+      <h1 class="text-center text-5xl font-bold italic my-6">Nomada</h1>
+      <div class="h-[1px] w-full bg-neutral-700"></div>
+      <div class="mt-6">
+        <a href="/" class="flex min-w-[280px] px-5 py-3 my-2 items-center rounded-md transition-colors hover:bg-neutral-800 outline-none">
+          <HomeIcon />
+          <p class="pl-3">Home</p>
+        </a>
+        <a href="/" class="flex min-w-[280px] px-5 py-3 my-2 items-center rounded-md transition-colors hover:bg-neutral-800 outline-none">
+          <SearchIcon />
+          <p class="pl-3">Search</p>
+        </a>
+      </div>
     </div>
     <div>
       <a :href="`/${currentUser?.username}`" class="flex min-w-[220px] px-5 py-3 my-2 items-center rounded-md transition-colors hover:bg-neutral-800 outline-none">

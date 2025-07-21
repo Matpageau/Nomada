@@ -4,7 +4,7 @@ import LoginView from "@/views/auth/Login.vue"
 import Signup from '@/views/auth/Signup.vue'
 import ProfileView from "@/features/Profile/ProfileView.vue"
 import TripListView from '@/features/Profile/components/TripListView.vue'
-import EditView from '@/features/Create/EditView.vue'
+import EditView from '@/features/Edit/EditView.vue'
 
 const routes = [
     {

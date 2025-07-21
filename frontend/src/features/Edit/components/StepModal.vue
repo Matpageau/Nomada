@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import BaseModal from '@/components/Modals/BaseModal.vue';
-import MediaGallery from '@/features/Create/components/MediaGallery.vue';
+import MediaGallery from '@/features/Edit/components/MediaGallery.vue';
 import BaseBtn from '@/components/Buttons/BaseBtn.vue';
 import { onMounted, ref } from 'vue';
 import axios from 'axios';
