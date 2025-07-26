@@ -55,8 +55,8 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="overflow-y-scroll h-full px-2 scrollbar-thin">
-    <div class="grid grid-cols-4 gap-4">
+  <div class="overflow-y-scroll h-full scrollbar-thin">
+    <div class="grid grid-cols-3 gap-2">
       <div class="relative aspect-square border-2 border-dashed border-gray-400 rounded-xl flex items-center justify-center hover:bg-gray-100 transition">
         <label class="flex flex-col items-center justify-center text-gray-500 cursor-pointer h-full w-full">
           <PlusIcon />

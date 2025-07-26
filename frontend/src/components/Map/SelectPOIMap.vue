@@ -2,9 +2,9 @@
 import mapboxgl from "mapbox-gl"
 import { createApp, onMounted, onUnmounted, ref, watch } from "vue";
 import 'mapbox-gl/dist/mapbox-gl.css'
-import type { MarkerData } from "@/Types/Marker";
 import MapMarker from "./MapMarker.vue";
 import type { Coordinate } from "@/Types/Coordinate";
+import type { MarkerData } from "@/Types/Marker";
 
 const emit = defineEmits<{
   (e: "update", newMarker: Coordinate): void
@@ -16,23 +16,30 @@ const props = defineProps<{
 
 const mapContainer = ref<HTMLDivElement | null>(null)
 let map: mapboxgl.Map | null = null
-let bounds = new mapboxgl.LngLatBounds()
 let currentMarker: mapboxgl.Marker | null = null
 
-onMounted(() => {
-  mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN!
-  if(!mapContainer.value) return
+const updateMarker = () => {  
+  if (!map || !props.marker) return;
 
-  if(props.marker) {
-    currentMarker = new mapboxgl.Marker()
+  currentMarker?.remove();
+
+  const container = document.createElement("div")
+  createApp(MapMarker, {
+    img: props.marker?.img
+  }).mount(container)
+
+  currentMarker = new mapboxgl.Marker({ element: container })
     .setLngLat([props.marker.coord.lng, props.marker.coord.lat])
+    .addTo(map)
+}
 
-    bounds.extend(currentMarker._lngLat)
-  }
+onMounted(() => {
+  mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN!;
+  if (!mapContainer.value) return;
 
   map = new mapboxgl.Map({
     container: mapContainer.value,
-    style: 'mapbox://styles/matissep/cmco3c11w00ic01s1e20vckdn',
+    style: 'mapbox://styles/matissep/cmd7svovc002r01s2alt3fms8',
     center: [0, 0],
     zoom: 2
   })
@@ -42,46 +49,34 @@ onMounted(() => {
     visualizePitch: true
   }))
 
-
-  watch(() => props.marker, (newMarker) => {
-    if (!map || !newMarker) return
-
-    if(currentMarker) {
-      currentMarker.remove()
-      currentMarker = null
-    }
-    
-    const container = document.createElement("div")
-    createApp(MapMarker, { img: newMarker.img }).mount(container)
-
-    currentMarker = new mapboxgl.Marker({ element: container })
-      .setLngLat([newMarker.coord.lng, newMarker.coord.lat])
-      .addTo(map!)
-
-  }, { immediate: true })
-
-  map.on("load", () => {
-    map!.fitBounds(bounds, {
-      padding: 50,
-      maxZoom: 7,
-      curve: 2,
-      duration: 4000
-    })
+  map.on("click", (e) => {
+    emit('update', { lng: e.lngLat.lng, lat: e.lngLat.lat });
   })
 
-  map.on("click", (e) => {
-    emit('update', {lng: e.lngLat.lng, lat: e.lngLat.lat})
+  map.on("load", () => {
+    if (props.marker) {
+      map?.flyTo({
+        center: [props.marker.coord.lng, props.marker.coord.lat],
+        padding: 50,
+        maxZoom: 7,
+        curve: 2,
+        duration: 4000
+      });
+    }
+  })
+
+  watch(() => props.marker, updateMarker, {
+    deep: true,
+    immediate: true
   })
 })
 
 onUnmounted(() => {
-  map?.remove()
+  map?.remove();
+  currentMarker?.remove();
 })
 </script>
 
 <template>
-  <div
-    ref="mapContainer"
-    class="w-full h-full"
-  />
+  <div ref="mapContainer" class="w-full h-full" />
 </template>

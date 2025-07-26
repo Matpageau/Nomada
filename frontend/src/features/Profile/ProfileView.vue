@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import Navbar from '@/components/Navbar/Navbar.vue'
 import defaultProfile from '@/assets/imgs/defautProfile.jpg'
 import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
 
+import Navbar from '@/components/Navbar/Navbar.vue'
 import ClientMap from '@/components/Map/ClientMap.vue'
 import MenuBtn from './components/MenuBtn.vue'
 import GlobeIcon from '@/components/icons/GlobeIcon.vue'
@@ -12,12 +12,13 @@ import EditIcon from '@/components/icons/EditIcon.vue'
 
 import type { UserType } from '@/Types/User'
 import type { PostType } from '@/Types/Post'
+import { useUserStore } from '@/stores/userStore'
 
+const userStore = useUserStore()
 const route = useRoute()
 const username = route.params.username as string
 const isDraftRoute = computed(() => route.path.endsWith('/draft'))
 
-const currentUser = ref<UserType | null>(null)
 const user = ref<UserType | null>(null)
 const posts = ref<PostType[]>([])
 
@@ -26,15 +27,9 @@ onMounted(async () => {
     const userRes = await axios.get<UserType>(`http://localhost:3000/user/by-username/${username}`)
     user.value = userRes.data
 
-    const [meRes, postsRes] = await Promise.all([
-      axios.get('http://localhost:3000/user/me', {
-        withCredentials: true
-      }),
-      axios.get(`http://localhost:3000/post/user/${user.value._id}`)
-    ])
-
-    currentUser.value = meRes.data
+    const postsRes = await axios.get(`http://localhost:3000/post/user/${user.value._id}`)
     posts.value = postsRes.data
+
   } catch (error) {
     console.error('❌ Failed to fetch user profile:', error)
   }
@@ -74,11 +69,11 @@ onMounted(async () => {
               <p><strong>0</strong> Subscriber</p>
             </div>
           </div>
-          <div v-if="currentUser?._id === user._id" class="flex justify-evenly mt-3">
-            <router-link :to="`/${user.username}`" :class="{'border-b-1': !isDraftRoute}">
+          <div v-if="userStore.currentUser?._id === user._id" class="flex justify-evenly mt-3">
+            <router-link :to="`/user/${user.username}`" :class="{'border-b-1': !isDraftRoute}">
               <MenuBtn><GlobeIcon class="h-[30px] w-[30px]"/></MenuBtn>
             </router-link>
-            <router-link :to="`/${user.username}/draft`" :class="{'border-b-1': isDraftRoute}">
+            <router-link :to="`/user/${user.username}/draft`" :class="{'border-b-1': isDraftRoute}">
               <MenuBtn><EditIcon class="h-[30px] w-[30px]"/></MenuBtn>
             </router-link>
           </div>

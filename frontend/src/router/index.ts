@@ -1,10 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/Home.vue'
-import LoginView from "@/views/auth/Login.vue"
-import Signup from '@/views/auth/Signup.vue'
+import LoginView from "@/features/Auth/Login.vue"
+import Signup from '@/features/Auth/Signup.vue'
 import ProfileView from "@/features/Profile/ProfileView.vue"
 import TripListView from '@/features/Profile/components/TripListView.vue'
 import EditView from '@/features/Edit/EditView.vue'
+import StepView from '@/features/Edit/Step/StepView.vue'
+import SettingView from '@/features/Settings/SettingView.vue'
 
 const routes = [
     {
@@ -23,7 +25,12 @@ const routes = [
       component: Signup
     },
     {
-      path: "/:username",
+      path: "/settings",
+      name: "userSettings",
+      component: SettingView
+    },
+    {
+      path: "/user/:username",
       component: ProfileView,
       children: [
         {
@@ -39,10 +46,25 @@ const routes = [
       ]
     },
     {
-      path: "/post/:postId/edit",
-      name: "create post",
-      component: EditView
-    }
+      path: "/post/:postId",
+      children: [
+        {
+        path: '',
+          name: 'createPost',
+          component: EditView
+        },
+        {
+          path: ":stepId",
+          name: "editStep",
+          component: StepView
+        },
+        {
+          path: "new-step",
+          name: "newStep",
+          component: StepView
+        }
+      ]
+    } 
   ]
 
 const router = createRouter({

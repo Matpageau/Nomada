@@ -20,7 +20,7 @@ const handleCreatePost = async () => {
 
     const createdPost = res.data
 
-    router.push(`/post/${createdPost._id}/edit`)
+    router.push(`/post/${createdPost._id}`)
   } catch (error) {
     console.error("❌ Failed to create draft post:", error)
   }
@@ -39,7 +39,7 @@ const handleCreatePost = async () => {
   <div 
     v-else
     class="flex justify-center items-center h-[350px] w-full rounded bg-neutral-600 hover:bg-neutral-700 transition-colors cursor-pointer"
-    @click="() => router.push(`/post/${post?._id}/edit`)"
+    @click="() => router.push(`/post/${post?._id}`)"
   >
     <img 
       v-if="post?.medias[0]"
