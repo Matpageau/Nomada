@@ -1,21 +1,22 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import cloudinary from "../middlewares/cloudinary";
 import fs from "fs";
 import { MediaService } from "../services/MediaService";
+import ApiError from "../Utils/ApiError";
+import { next } from "cheerio/lib/api/traversing";
 
 interface MulterRequest extends Request {
   files: Express.Multer.File[]
 }
 
 const MediaController = {
-  async upload(req: any, res: Response) {
+  async upload(req: any, res: Response, next: NextFunction) {
     try {
       const ownerId = req.userId
       const multerReq = req as MulterRequest;
 
       if (!multerReq.files || multerReq.files.length === 0) {
-        res.status(400).json({ error: "No files provided" });
-        return
+        throw new ApiError(400, "NO_MEDIA", "No media was given")
       }
 
       const uploadedUrls: string[] = [];
@@ -36,25 +37,23 @@ const MediaController = {
         mediaIds: mediaDoc.map(doc => doc._id),
         imageUrls: uploadedUrls
       });
-    } catch (error: any) {
-      console.error("Upload failed:", error);
-      res.status(500).json({ error: "Media upload failed" });
+    } catch (error) {
+      next(error)
     }
   },
 
-  async getMediaById(req: Request, res: Response) {
+  async getMediaById(req: Request, res: Response, next: NextFunction) {
     try {
       const { mediaId } = req.body
       
       const media = MediaService.getMediaById(mediaId)
       if(!media) {
-        res.status(404).json({ error: "No media found"})
-        return
+        throw new ApiError(404, "NO_MEDIA_FOUND", "No media found")
       }
 
       res.status(200).json(media)
     } catch (error) {
-      res.status(500).json({ error: "Media fetching failed" });
+      next(error)
     }
   }
 };

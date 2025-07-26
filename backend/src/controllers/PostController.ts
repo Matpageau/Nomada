@@ -1,31 +1,32 @@
-import { Request, Response } from "express"
+import { NextFunction, Request, Response } from "express"
 import { PostService } from "../services/PostService"
+import ApiError from "../Utils/ApiError"
 
 const PostController = {
-  async getAllPosts(req: Request, res: Response) {
+  async getAllPosts(req: Request, res: Response, next: NextFunction) {
     try {
       const { userId } = req.params
 
       const posts = await PostService.getAllPosts(userId)
       res.status(200).json(posts)
-    } catch (error: any) {
-      res.status(401).json({ message: error.message })
+    } catch (error) {
+      next(error)
     }
   },
 
-  async createPost(req: any, res: Response) {
+  async createPost(req: any, res: Response, next: NextFunction) {
     try {
       const userId = req.userId
       
       const newPost = await PostService.createPost(userId)
 
       res.status(200).json(newPost)
-    } catch (error: any) {
-      res.status(401).json({ message: error.message })
+    } catch (error) {
+      next(error)
     }
   },
 
-  async updatePost(req: any, res: Response) {
+  async updatePost(req: any, res: Response, next: NextFunction) {
     try {
       const userId = req.userId
       const postId = req.params.postId
@@ -34,27 +35,26 @@ const PostController = {
       const post = await PostService.getPost(postId)
   
       if(post.owner_id != userId) {
-        res.status(403).json({ error: "Not authorized"})
-        return
+        throw new ApiError(403, "NOT_AUTHORIZED", "You are not the owner of that post")
       }
       
       const updatedPost = await PostService.updatePost(postId, updateData)
 
       res.status(200).json(updatedPost)
-    } catch (error: any) {
-      res.status(500).json({ error: 'Failed to update post' })
+    } catch (error) {
+      next(error)
     }
   },
 
-  async getAllStepFromPost(req: Request, res: Response) {
+  async getAllStepFromPost(req: Request, res: Response, next: NextFunction) {
     try {
       const { postId } = req.params
       
       const steps = await PostService.getAllStepFromPost(postId)
       
       res.status(200).json(steps)
-    } catch (error: any) {
-      res.status(500).json({ error: 'Failed to fetch steps' })
+    } catch (error) {
+      next(error)
     }
   }
 }

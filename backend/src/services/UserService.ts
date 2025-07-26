@@ -36,14 +36,14 @@ export const UserService = {
 
   async getCurrentUser(userId: string): Promise<UserType> {
     const user = await UserModel.findById(userId).select('-password').lean()
-    if (!user) throw new Error('User not found')
+    if (!user) throw new ApiError(404, "USER_NOT_FOUND", "User not found")
 
     return user
   },
 
   async getUserByUsername(username: string): Promise<UserType> {
     const user = await UserModel.findOne({ username }).select('-password').lean()
-    if (!user) throw new Error('User not found')
+    if (!user) throw new ApiError(404, "USER_NOT_FOUND", "User not found")
 
     return user
   }

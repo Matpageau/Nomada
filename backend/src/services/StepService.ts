@@ -1,6 +1,7 @@
 import { Types } from "mongoose"
 import { StepModel } from "../models/StepModel"
 import { StepType } from "../Types/Step"
+import ApiError from "../Utils/ApiError"
 
 export const StepService = {
   async getAllStepFromPost(postId: string): Promise<StepType[]> {
@@ -10,7 +11,7 @@ export const StepService = {
   async getStep(stepId: string): Promise<StepType> {
     const step = await StepModel.findById(stepId).populate("medias").lean()
     
-    if(!step) throw new Error("Step not found")
+    if(!step) throw new ApiError(404, "NO_STEP_FOUND", "No step found")
     return step
   },
 

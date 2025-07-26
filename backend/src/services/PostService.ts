@@ -2,6 +2,7 @@ import { Types } from "mongoose";
 import { PostModel } from "../models/PostModel";
 import { PostType } from "../Types/Post";
 import { StepModel } from "../models/StepModel";
+import ApiError from "../Utils/ApiError";
 
 export const PostService = {
   async getAllPosts(userId: string): Promise<PostType[]> {
@@ -10,7 +11,7 @@ export const PostService = {
 
   async getPost(postId: string): Promise<PostType> {
     const post = await PostModel.findById(postId).lean()
-    if(!post) throw new Error("Post not found")
+    if(!post) throw new ApiError(404, "NO_POST_FOUND")
     
     return post
   },
@@ -27,7 +28,7 @@ export const PostService = {
 
   async addStepToPost(postId: string, stepId: Types.ObjectId): Promise<PostType> {
     const post = await PostModel.findById(postId)
-    if(!post) throw new Error("Post not found")
+    if(!post) throw new ApiError(404, "NO_POST_FOUND", "No post found")
     
     post.steps.push(stepId)
     await post.save()

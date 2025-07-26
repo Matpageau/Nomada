@@ -2,6 +2,7 @@ import e, { NextFunction, Request, Response } from 'express'
 import jwt from "jsonwebtoken"
 import { UserService } from '../services/UserService'
 import ApiError from '../Utils/ApiError'
+import { next } from 'cheerio/lib/api/traversing'
 
 const UserController = {
   async login(req: Request, res: Response, next: NextFunction) {
@@ -44,7 +45,7 @@ const UserController = {
     }
   },
 
-  async getCurrentUser(req: any, res: Response) {
+  async getCurrentUser(req: any, res: Response, next: NextFunction) {
     try {
       const userId = req.userId
       
@@ -57,13 +58,12 @@ const UserController = {
 
       const user = await UserService.getCurrentUser(userId)
       res.status(200).json(user)
-    } catch (error: any) {
-      console.error(error.message)
-      res.status(401).json({ message: error.message })
+    } catch (error) {
+      next(error)
     }
   },
 
-  async getByUsername(req: any, res: Response) {
+  async getByUsername(req: any, res: Response, next: NextFunction) {
     try {
       const username = req.params.username
       
@@ -76,9 +76,8 @@ const UserController = {
 
       const user = await UserService.getUserByUsername(username)
       res.status(200).json(user)
-    } catch (error: any) {
-      console.error(error.message)
-      res.status(401).json({ message: error.message })
+    } catch (error) {
+      next(error)
     }
   }
 }

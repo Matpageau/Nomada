@@ -1,37 +1,36 @@
-import { Request, Response } from "express"
+import { NextFunction, Request, Response } from "express"
 import { PostService } from "../services/PostService"
 import { StepService } from "../services/StepService"
 import { Types } from "mongoose"
-import { MediaService } from "../services/MediaService"
 
 const StepController = {
-  async getAllStepsFromPost(req: any, res: Response) {
+  async getAllStepsFromPost(req: any, res: Response, next: NextFunction) {
     try {
       const { postId } = req.params
 
       const steps = await StepService.getAllStepFromPost(postId)
 
       res.status(200).json(steps)
-    } catch (error: any) {
-      return res.status(500).json({ message: error.message || 'Internal server error' })
+    } catch (error) {
+      next(error)
     }
   },
 
-  async getStep(req: Request, res: Response) {
+  async getStep(req: Request, res: Response, next: NextFunction) {
     try {
       const { stepId } = req.params
 
       const step = await StepService.getStep(stepId)
 
       res.status(200).json(step)
-    } catch (error: any) {
-      res.status(500).json({ message: error.message || 'Internal server error' })
+    } catch (error) {
+      next(error)
     }
   },
 
-  async createStep(req: any, res: Response) {
+  async createStep(req: any, res: Response, next: NextFunction) {
     try {
-      const userId = req.userId
+      const userId: string = req.userId
       const { postId, mediaIds, description, location } = req.body
 
       const post = await PostService.getPost(postId)
@@ -58,8 +57,8 @@ const StepController = {
       const updatedPost = await PostService.addStepToPost(postId, newStep._id as Types.ObjectId)
   
       res.status(200).json(updatedPost)
-    } catch (error: any) {
-     res.status(500).json({ message: error.message || 'Internal server error' })
+    } catch (error) {
+     next(error)
     }
   },
 
