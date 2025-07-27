@@ -1,11 +1,9 @@
-import { Types } from "mongoose"
-
 export type PostType = {
-  _id? : Types.ObjectId
-  owner_id: Types.ObjectId
+  _id? : string
+  owner_id: string
   description: string
-  medias: Types.ObjectId[]
-  steps: Types.ObjectId[]
+  medias: string[]
+  steps: string[]
   tags: string[]
   status: "private" | "public" | "draft"
   createdAt: Date

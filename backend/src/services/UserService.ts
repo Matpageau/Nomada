@@ -4,10 +4,10 @@ import bcrypt from 'bcrypt'
 import ApiError from "../Utils/ApiError"
 
 export const UserService = {
-  async login(username: string, password: string): Promise<UserType> {
+  async login(username: string, password: string) {
     const user = await UserModel.findOne({
       $or: [{username: username}, {email: username}]
-    }).lean()
+    })
     if(!user) throw new ApiError(404, "USER_NOT_FOUND", "User not found")
 
     const isMatch = await bcrypt.compare(password, user.password)
@@ -16,7 +16,7 @@ export const UserService = {
     return user
   },
 
-  async register(email: string, password: string, username: string): Promise<UserType> {
+  async register(email: string, password: string, username: string) {
     const existingMail = await UserModel.findOne({ email }).lean()
     if(existingMail) throw new ApiError(403, "EMAIL_USED", "Email already used")
 
@@ -34,14 +34,14 @@ export const UserService = {
     return await user.save()
   },
 
-  async getCurrentUser(userId: string): Promise<UserType> {
+  async getCurrentUser(userId: string) {
     const user = await UserModel.findById(userId).select('-password').lean()
     if (!user) throw new ApiError(404, "USER_NOT_FOUND", "User not found")
 
     return user
   },
 
-  async getUserByUsername(username: string): Promise<UserType> {
+  async getUserByUsername(username: string) {
     const user = await UserModel.findOne({ username }).select('-password').lean()
     if (!user) throw new ApiError(404, "USER_NOT_FOUND", "User not found")
 

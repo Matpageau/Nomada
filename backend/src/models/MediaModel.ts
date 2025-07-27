@@ -1,9 +1,6 @@
-import mongoose, { Model } from "mongoose";
-import { MediaType } from "../Types/Media";
+import mongoose from "mongoose";
 
-interface MediaDocument extends MediaType, Document {}
-
-const MediaSchema = new mongoose.Schema<MediaDocument>({
+const MediaSchema = new mongoose.Schema({
   owner_id: {
     type : mongoose.SchemaTypes.ObjectId,
     ref: "User",
@@ -22,4 +19,4 @@ const MediaSchema = new mongoose.Schema<MediaDocument>({
   timestamps: true
 })
 
-export const MediaModel: Model<MediaDocument> = mongoose.models.Media || mongoose.model<MediaDocument>("Media", MediaSchema)
+export const MediaModel = mongoose.models.Media || mongoose.model("Media", MediaSchema)

@@ -1,9 +1,6 @@
 import mongoose, { Model } from "mongoose";
-import { PostType } from "../Types/Post";
 
-interface PostDocument extends PostType, Document {}
-
-const PostSchema = new mongoose.Schema<PostDocument>({
+const PostSchema = new mongoose.Schema({
   owner_id: {
     type : mongoose.SchemaTypes.ObjectId,
     ref: "User",
@@ -34,4 +31,4 @@ const PostSchema = new mongoose.Schema<PostDocument>({
   timestamps: true
 })
 
-export const PostModel: Model<PostDocument> = mongoose.models.Post || mongoose.model<PostDocument>("Post", PostSchema)
+export const PostModel = mongoose.models.Post || mongoose.model("Post", PostSchema)

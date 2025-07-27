@@ -3,13 +3,25 @@ import PlusIcon from '@/components/icons/PlusIcon.vue';
 import type { PostType } from '../../../Types/Post';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
+import { onMounted, ref } from 'vue';
 
 const router = useRouter()
 
-defineProps<{
+const tripImg = ref("")
+
+const props = defineProps<{
   post?: PostType
   isCreate?: boolean
 }>()
+
+onMounted(async () => {
+  if(props.post) {
+    const resTrimImg = await axios.get(`http://localhost:3000/media/${props.post.medias[0]}`)
+    tripImg.value = resTrimImg.data.url
+    console.log(resTrimImg.data.url);
+  }
+  
+})
 
 const handleCreatePost = async () => {
   try {
@@ -26,6 +38,7 @@ const handleCreatePost = async () => {
   }
   
 }
+
 </script>
 
 <template>
@@ -36,16 +49,15 @@ const handleCreatePost = async () => {
   >
     <PlusIcon class="h-[45px] w-[45px]"/>
   </div>
-  <div 
-    v-else
+  <div
+    v-else-if="tripImg"
     class="flex justify-center items-center h-[350px] w-full rounded bg-neutral-600 hover:bg-neutral-700 transition-colors cursor-pointer"
     @click="() => router.push(`/post/${post?._id}`)"
   >
-    <img 
-      v-if="post?.medias[0]"
-      :src="post.medias[0].toString()"
+    <img
+      :src="tripImg"
       alt="Trip photo"
-      class="h-full w-full"
+      class="h-full w-full object-cover"
     >
   </div>
 </template>

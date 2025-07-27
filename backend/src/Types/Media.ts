@@ -1,8 +1,6 @@
-import { Types } from "mongoose"
-
 export type MediaType = {
-  _id?: Types.ObjectId
+  _id?: string
   type: "photo" | "video"
   url: string
-  owner_id: Types.ObjectId
+  owner_id: string
 }

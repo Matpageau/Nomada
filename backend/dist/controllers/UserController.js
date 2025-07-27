@@ -36,7 +36,7 @@ const UserController = {
             next(error);
         }
     },
-    async getCurrentUser(req, res) {
+    async getCurrentUser(req, res, next) {
         try {
             const userId = req.userId;
             if (!userId) {
@@ -49,11 +49,10 @@ const UserController = {
             res.status(200).json(user);
         }
         catch (error) {
-            console.error(error.message);
-            res.status(401).json({ message: error.message });
+            next(error);
         }
     },
-    async getByUsername(req, res) {
+    async getByUsername(req, res, next) {
         try {
             const username = req.params.username;
             if (!username) {
@@ -66,8 +65,7 @@ const UserController = {
             res.status(200).json(user);
         }
         catch (error) {
-            console.error(error.message);
-            res.status(401).json({ message: error.message });
+            next(error);
         }
     }
 };

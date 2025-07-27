@@ -44,9 +44,9 @@ const MediaController = {
 
   async getMediaById(req: Request, res: Response, next: NextFunction) {
     try {
-      const { mediaId } = req.body
+      const { mediaId } = req.params
       
-      const media = MediaService.getMediaById(mediaId)
+      const media = await MediaService.getMediaById(mediaId)
       if(!media) {
         throw new ApiError(404, "NO_MEDIA_FOUND", "No media found")
       }

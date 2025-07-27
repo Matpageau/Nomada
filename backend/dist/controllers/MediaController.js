@@ -6,14 +6,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const cloudinary_1 = __importDefault(require("../middlewares/cloudinary"));
 const fs_1 = __importDefault(require("fs"));
 const MediaService_1 = require("../services/MediaService");
+const ApiError_1 = __importDefault(require("../Utils/ApiError"));
 const MediaController = {
-    async upload(req, res) {
+    async upload(req, res, next) {
         try {
             const ownerId = req.userId;
             const multerReq = req;
             if (!multerReq.files || multerReq.files.length === 0) {
-                res.status(400).json({ error: "No files provided" });
-                return;
+                throw new ApiError_1.default(400, "NO_MEDIA", "No media was given");
             }
             const uploadedUrls = [];
             for (const file of multerReq.files) {
@@ -30,22 +30,20 @@ const MediaController = {
             });
         }
         catch (error) {
-            console.error("Upload failed:", error);
-            res.status(500).json({ error: "Media upload failed" });
+            next(error);
         }
     },
-    async getMediaById(req, res) {
+    async getMediaById(req, res, next) {
         try {
-            const { mediaId } = req.body;
-            const media = MediaService_1.MediaService.getMediaById(mediaId);
+            const { mediaId } = req.params;
+            const media = await MediaService_1.MediaService.getMediaById(mediaId);
             if (!media) {
-                res.status(404).json({ error: "No media found" });
-                return;
+                throw new ApiError_1.default(404, "NO_MEDIA_FOUND", "No media found");
             }
             res.status(200).json(media);
         }
         catch (error) {
-            res.status(500).json({ error: "Media fetching failed" });
+            next(error);
         }
     }
 };

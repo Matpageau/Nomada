@@ -1,9 +1,6 @@
 import mongoose, { Model } from "mongoose";
-import { UserType } from "../Types/User"
 
-interface UserDocument extends UserType, Document {}
-
-const UserSchema = new mongoose.Schema<UserDocument>({
+const UserSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
@@ -36,4 +33,4 @@ const UserSchema = new mongoose.Schema<UserDocument>({
   timestamps: true
 })
 
-export const UserModel: Model<UserDocument> = mongoose.models.User || mongoose.model<UserDocument>("User", UserSchema)
+export const UserModel = mongoose.models.User || mongoose.model("User", UserSchema)

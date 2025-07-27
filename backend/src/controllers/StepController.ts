@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express"
 import { PostService } from "../services/PostService"
 import { StepService } from "../services/StepService"
-import { Types } from "mongoose"
+import ApiError from "../Utils/ApiError"
 
 const StepController = {
   async getAllStepsFromPost(req: any, res: Response, next: NextFunction) {
@@ -36,13 +36,11 @@ const StepController = {
       const post = await PostService.getPost(postId)
 
       if(!post) {
-        res.status(404).json({ message: 'Post not found' })
-        return
+        throw new ApiError(404, "NO_POST_FOUND", "No post found")
       }
 
       if(post.owner_id.toString() != userId) {
-        res.status(403).json({ message: 'Unauthorized: You do not own this post' })
-        return
+        throw new ApiError(403, "NOT_AUTHORIZED", "You are not the owner of that post")
       }
       
       const newStep = await StepService.createStep(
@@ -52,9 +50,9 @@ const StepController = {
         location.lng,
         location.lat
       )
-      if(!newStep?._id) throw new Error("Error while creating step")
+      if(!newStep?._id) throw new ApiError(500, "ERROR_WHILE_CREATING", "Error while creating step")
 
-      const updatedPost = await PostService.addStepToPost(postId, newStep._id as Types.ObjectId)
+      const updatedPost = await PostService.addStepToPost(postId, newStep._id.toString(), mediaIds)
   
       res.status(200).json(updatedPost)
     } catch (error) {
@@ -65,6 +63,18 @@ const StepController = {
   async updateStep(req: Request, res: Response) {
 
   },
+
+  async getStepMedias(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { stepId } = req.params
+
+      const step = await StepService.getStepMedias(stepId)
+
+      res.status(200).json(step)
+    } catch (error) {
+      next(error)
+    }
+  }
 }
 
 export default StepController

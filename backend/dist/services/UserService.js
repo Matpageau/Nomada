@@ -11,7 +11,7 @@ exports.UserService = {
     async login(username, password) {
         const user = await UserModel_1.UserModel.findOne({
             $or: [{ username: username }, { email: username }]
-        }).lean();
+        });
         if (!user)
             throw new ApiError_1.default(404, "USER_NOT_FOUND", "User not found");
         const isMatch = await bcrypt_1.default.compare(password, user.password);
@@ -37,13 +37,13 @@ exports.UserService = {
     async getCurrentUser(userId) {
         const user = await UserModel_1.UserModel.findById(userId).select('-password').lean();
         if (!user)
-            throw new Error('User not found');
+            throw new ApiError_1.default(404, "USER_NOT_FOUND", "User not found");
         return user;
     },
     async getUserByUsername(username) {
         const user = await UserModel_1.UserModel.findOne({ username }).select('-password').lean();
         if (!user)
-            throw new Error('User not found');
+            throw new ApiError_1.default(404, "USER_NOT_FOUND", "User not found");
         return user;
     }
 };

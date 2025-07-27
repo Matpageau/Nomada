@@ -1,8 +1,6 @@
-import { Types } from "mongoose"
-
 export type StepType = {
-  _id? : Types.ObjectId
-  post_id: Types.ObjectId
+  _id? : string
+  post_id: string
   lng: number
   lat: number
   medias: string[]
